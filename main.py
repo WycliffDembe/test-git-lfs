@@ -28,7 +28,12 @@ def get_ready_message(filename='sms_file.json'):
 	today = get_day_today()
 	today_found = False
 
-	while not today_found:
+	trials = 0
+	MAX_TRIALS = 10000
+
+	while not today_found and trials<MAX_TRIALS:
+
+		trials += 1
 
 		language_list = list(data_dict.keys())
 		language = random.choice(language_list)
@@ -40,12 +45,17 @@ def get_ready_message(filename='sms_file.json'):
 
 		today_found = True if today in day_list else False
 
-	msg_dict = data_dict[language][crop][today]
+	print('============ trials: {} ============'.format(trials))
 
-	complete_msg_list = [get_complete_message(title,subtitle,msg) \
-	for title,subtitle,msg in zip(msg_dict['title'], msg_dict['subtitle'], msg_dict['msg'])]
+	if not today_found:
+		language,crop,msg = '','',''
+	else:
+		msg_dict = data_dict[language][crop][today]
 
-	msg = random.choice(complete_msg_list)
+		complete_msg_list = [get_complete_message(title,subtitle,msg) \
+		for title,subtitle,msg in zip(msg_dict['title'], msg_dict['subtitle'], msg_dict['msg'])]
+
+		msg = random.choice(complete_msg_list)
 
 	return language, crop, today, msg
 
